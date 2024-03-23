@@ -1,39 +1,50 @@
-import {createElement} from '../render.js';
+import { createElement } from '../render.js';
+import { formatPointDate, formatPointTime, getRandomArrayElement, getTimeDifference, getRandomInteger } from '../utils.js';
 
-function createRoutePointTemplate() {
+function createSelectedOffersTemplate(offers) {
+  return offers.map((offer) => `
+  ${getRandomInteger(0, 1) ? `<li class="event__offer">
+    <span class="event__offer-title">${offer.title}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${offer.price}</span>
+  </li>
+  ` : ''}`).join('');
+}
+
+function createRoutePointTemplate({ point, destinations, offers }) {
+
+  const timeFrom = formatPointTime(point.dateFrom);
+  const timeTo = formatPointTime(point.dateTo);
+  const duration = getTimeDifference(point.dateFrom, point.dateTo);
+  const date = formatPointDate(point.dateFrom);
+  const isActiveClassName = point.isFavorite ? 'event__favorite-btn--active' : '';
+
+  const destination = getRandomArrayElement(destinations);
+
   return `
   <li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="2019-03-18">MAR 18</time>
+      <time class="event__date" datetime="2019-03-18">${date}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/flight.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">Flight Chamonix</h3>
+      <h3 class="event__title">${point.type} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T12:25">12:25</time>
+          <time class="event__start-time" datetime="2019-03-18T12:25">${timeFrom}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T13:35">13:35</time>
+          <time class="event__end-time" datetime="2019-03-18T13:35">${timeTo}</time>
         </p>
-        <p class="event__duration">01H 10M</p>
+        <p class="event__duration">${duration}</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">160</span>
+        &euro;&nbsp;<span class="event__price-value">${point.basePrice}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Add luggage</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">50</span>
-        </li>
-        <li class="event__offer">
-          <span class="event__offer-title">Switch to comfort</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">80</span>
-        </li>
+        ${createSelectedOffersTemplate(offers)}
       </ul>
-      <button class="event__favorite-btn" type="button">
+      <button class="event__favorite-btn ${isActiveClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path
@@ -49,8 +60,18 @@ function createRoutePointTemplate() {
 }
 
 export default class RoutePointView {
+  constructor({ point, destinations, offers }) {
+    this.point = point;
+    this.destinations = destinations;
+    this.offers = offers;
+  }
+
   getTemplate() {
-    return createRoutePointTemplate();
+    return createRoutePointTemplate({
+      point: this.point,
+      destinations: this.destinations,
+      offers: this.offers
+    });
   }
 
   getElement() {
