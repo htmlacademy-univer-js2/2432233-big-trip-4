@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createListEmptyTemplate() {
   return '<p class="trip-events__msg">Click New Event to create your first point</p>';
@@ -9,20 +9,8 @@ function createListEmptyTemplate() {
   //   * Future — 'There are no future events now'.
 }
 
-export default class ListEmptyView {
-  getTemplate() {
+export default class ListEmptyView extends AbstractView {
+  get template() {
     return createListEmptyTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

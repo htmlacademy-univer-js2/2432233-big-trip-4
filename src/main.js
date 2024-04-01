@@ -2,7 +2,7 @@ import FiltersView from './view/filters-view.js';
 import TripInfoView from './view/trip-info-view.js';
 import RoutePresenter from './presenter/route-presenter.js';
 
-import { render, RenderPosition } from './render.js';
+import { render, RenderPosition } from './framework/render.js';
 
 import PointsModel from './model/point-model.js';
 import DestinationsModel from './model/destination-model.js';

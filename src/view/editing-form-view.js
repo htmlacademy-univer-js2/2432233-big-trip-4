@@ -1,5 +1,5 @@
-import { createElement } from '../render.js';
 import { formatEditDate, getRandomArrayElement, getRandomInteger } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const BLANK_POINT = {
   id: null,
@@ -160,30 +160,44 @@ function createEditingFormTemplate({ point, destinations, offerItem }) {
   `;
 }
 
-export default class EditingFormView {
-  constructor({ point = BLANK_POINT, destinations, offerItem }) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offerItem = offerItem;
+export default class EditingFormView extends AbstractView {
+  #point = null;
+  #destinations = null;
+  #offerItem = null;
+
+  #handleSubmitClick = null;
+  #handleCloseClick = null;
+
+  constructor({ point = BLANK_POINT, destinations, offerItem, onSubmit, onClose }) {
+    super();
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offerItem = offerItem;
+    this.#handleSubmitClick = onSubmit;
+    this.#handleCloseClick = onClose;
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#submitClickHandler);
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#closeClickHandler);
   }
 
-  getTemplate() {
+  get template() {
     return createEditingFormTemplate({
-      point: this.point,
-      destinations: this.destinations,
-      offerItem: this.offerItem
+      point: this.#point,
+      destinations: this.#destinations,
+      offerItem: this.#offerItem
     });
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #submitClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSubmitClick();
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseClick();
+  };
 }

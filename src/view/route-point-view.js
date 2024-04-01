@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { formatPointDate, formatPointTime, getRandomArrayElement, getTimeDifference, getRandomInteger } from '../utils.js';
 
 function createSelectedOffersTemplate(offers) {
@@ -59,30 +59,33 @@ function createRoutePointTemplate({ point, destinations, offers }) {
   `;
 }
 
-export default class RoutePointView {
-  constructor({ point, destinations, offers }) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+export default class RoutePointView extends AbstractView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+  #handleEditClick = null;
+
+  constructor({ point, destinations, offers, onEditClick }) {
+    super();
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
-  getTemplate() {
+  get template() {
     return createRoutePointTemplate({
-      point: this.point,
-      destinations: this.destinations,
-      offers: this.offers
+      point: this.#point,
+      destinations: this.#destinations,
+      offers: this.#offers
     });
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
