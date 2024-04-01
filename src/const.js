@@ -19,6 +19,6 @@ const OFFERS = [
   'Car rental',
   'Private transfer'
 ];
-const POINTS_COUNT = 4;
+const POINTS_COUNT = 5;
 
 export { TYPES, DESCRIPTIONS, PLACES, OFFERS, POINTS_COUNT };
