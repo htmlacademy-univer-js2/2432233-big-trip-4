@@ -32,7 +32,7 @@ function getTimeDifference(dateFrom, dateTo) {
 
 // console.log(getTimeDifference(new Date(2023, 11, 4, 10, 0), new Date(2023, 11, 6, 13, 20)));
 
-function getRandomDate(date = new Date()) {
+function getRandomDate(date = new Date(0)) {
   return dayjs(date).add(getRandomInteger(30, 1500), 'minute');
 }
 

@@ -4,6 +4,7 @@ import RoutePointView from '../view/route-point-view.js';
 import SortingView from '../view/sorting-view.js';
 import { render, replace } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty-view.js';
+import { filter } from '../utils/filter.js';
 
 export default class RoutePresenter {
   #routeContainer = null;
@@ -36,6 +37,8 @@ export default class RoutePresenter {
 
     render(this.#sortingComponent, this.#routeContainer);
     render(this.#pointsListComponent, this.#routeContainer);
+
+    this.#routePoints = filter.past(this.#routePoints);
 
     for (let i = 0; i < this.#routePoints.length; i++) {
       this.#renderPoint(this.#routePoints[i]);
