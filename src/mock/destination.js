@@ -1,5 +1,5 @@
 import { DESCRIPTIONS, PLACES } from '../const.js';
-import { getRandomArrayElement, getRandomInteger } from '../utils.js';
+import { getRandomArrayElement, getRandomInteger } from '../utils/common.js';
 
 function generatePictures(place) {
   const result = [];

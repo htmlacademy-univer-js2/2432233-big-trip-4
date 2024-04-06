@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { formatPointDate, formatPointTime, getRandomArrayElement, getTimeDifference, getRandomInteger } from '../utils.js';
+import { formatPointDate, formatPointTime, getTimeDifference } from '../utils/date.js';
+import { getRandomArrayElement, getRandomInteger } from '../utils/common.js';
 
 function createSelectedOffersTemplate(offers) {
   return offers.map((offer) => `
