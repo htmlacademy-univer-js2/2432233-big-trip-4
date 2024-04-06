@@ -3,6 +3,8 @@ import ListOfRoutePointsView from '../view/list-of-route-points-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import SortingView from '../view/sorting-view.js';
 import { render, replace } from '../framework/render.js';
+import ListEmptyView from '../view/list-empty-view.js';
+import { filter } from '../utils/filter.js';
 
 export default class RoutePresenter {
   #routeContainer = null;
@@ -15,6 +17,7 @@ export default class RoutePresenter {
 
   #pointsListComponent = new ListOfRoutePointsView();
   #sortingComponent = new SortingView();
+  #emptyListComponent = new ListEmptyView();
 
   constructor({ routeContainer, pointsModel, destinationsModel, offersModel }) {
     this.#routeContainer = routeContainer;
@@ -27,10 +30,17 @@ export default class RoutePresenter {
     this.#routePoints = [...this.#pointsModel.points];
     this.#destinations = [...this.#destinationsModel.destinations];
 
+    if (this.#routePoints.length === 0) {
+      render(this.#emptyListComponent, this.#routeContainer);
+      return;
+    }
+
     render(this.#sortingComponent, this.#routeContainer);
     render(this.#pointsListComponent, this.#routeContainer);
 
-    for (let i = 1; i < this.#routePoints.length; i++) {
+    this.#routePoints = filter.past(this.#routePoints);
+
+    for (let i = 0; i < this.#routePoints.length; i++) {
       this.#renderPoint(this.#routePoints[i]);
     }
   }

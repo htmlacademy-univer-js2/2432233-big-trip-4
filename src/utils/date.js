@@ -1,13 +1,5 @@
 import dayjs from 'dayjs';
-
-function getRandomArrayElement(array) {
-  const randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
-}
-
-function getRandomInteger(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
+import { getRandomInteger } from './common';
 
 function formatPointDate(date) {
   return date ? dayjs(date).format('MMM D') : '';
@@ -40,10 +32,10 @@ function getTimeDifference(dateFrom, dateTo) {
 
 // console.log(getTimeDifference(new Date(2023, 11, 4, 10, 0), new Date(2023, 11, 6, 13, 20)));
 
-function getRandomDate(date = new Date()) {
+function getRandomDate(date = new Date(0)) {
   return dayjs(date).add(getRandomInteger(30, 1500), 'minute');
 }
 
 // console.log(getRandomDate().format('YYYY MMMM DD[D] HH[H] mm[M]'));
 
-export { getRandomArrayElement, getRandomInteger, formatPointDate, formatPointTime, getTimeDifference, getRandomDate, formatEditDate };
+export { formatPointDate, formatPointTime, getTimeDifference, getRandomDate, formatEditDate };

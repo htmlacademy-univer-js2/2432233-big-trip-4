@@ -1,4 +1,5 @@
-import { getRandomInteger, getRandomDate, getRandomArrayElement } from '../utils.js';
+import { getRandomInteger, getRandomArrayElement } from '../utils/common.js';
+import { getRandomDate } from '../utils/date.js';
 import { TYPES } from '../const.js';
 
 function generatePoint() {

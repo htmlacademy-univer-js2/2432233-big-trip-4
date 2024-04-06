@@ -1,4 +1,5 @@
-import { formatEditDate, getRandomArrayElement, getRandomInteger } from '../utils.js';
+import { getRandomArrayElement, getRandomInteger } from '../utils/common.js';
+import { formatEditDate } from '../utils/date.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const BLANK_POINT = {
