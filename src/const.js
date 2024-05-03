@@ -19,6 +19,12 @@ const OFFERS = [
   'Car rental',
   'Private transfer'
 ];
-const POINTS_COUNT = 5;
+const POINTS_COUNT = 3;
 
-export { TYPES, DESCRIPTIONS, PLACES, OFFERS, POINTS_COUNT };
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price'
+};
+
+export { TYPES, DESCRIPTIONS, PLACES, OFFERS, POINTS_COUNT, SortType };
