@@ -4,6 +4,8 @@ import { render } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/common.js';
+import { SortType } from '../const.js';
+import { sortPointsPrice, sortPointsTime } from '../utils/sort-points.js';
 // import { filter } from '../utils/filter.js';
 
 export default class RoutePresenter {
@@ -16,7 +18,9 @@ export default class RoutePresenter {
   #destinations = [];
 
   #pointsListComponent = new ListOfRoutePointsView();
-  #sortingComponent = new SortingView();
+  #sortingComponent = null;
+  #currentSortType = SortType.DAY;
+  #sourcedRoutePoints = [];
   #emptyListComponent = new ListEmptyView();
 
   #pointsPresenters = new Map();
@@ -32,6 +36,7 @@ export default class RoutePresenter {
     this.#routePoints = [...this.#pointsModel.points];
     this.#destinations = [...this.#destinationsModel.destinations];
 
+    this.#sourcedRoutePoints = [...this.#pointsModel.points];
     // this.#routePoints = filter.future(this.#routePoints);
 
     this.#renderRoute();
@@ -41,12 +46,42 @@ export default class RoutePresenter {
     render(this.#emptyListComponent, this.#routeContainer);
   }
 
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#routePoints.sort(sortPointsTime);
+        break;
+      case SortType.PRICE:
+        this.#routePoints.sort(sortPointsPrice);
+        break;
+      default:
+        this.#routePoints = [...this.#sourcedRoutePoints];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearPointsList();
+    this.#renderPoints();
+  };
+
   #renderSort() {
+    this.#sortingComponent = new SortingView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortingComponent, this.#routeContainer);
   }
 
   #handlePointChange = (updatePoint) => {
     this.#routePoints = updateItem(this.#routePoints, updatePoint);
+    this.#sourcedRoutePoints = updateItem(this.#routePoints, updatePoint);
     this.#pointsPresenters.get(updatePoint.id).init(updatePoint, this.#destinations, this.#offersModel);
   };
 
