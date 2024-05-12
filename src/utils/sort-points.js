@@ -1,13 +1,11 @@
-import { getTimeDifference } from './date.js';
-
 function sortPointsTime(taskA, taskB) {
-  const timeA = getTimeDifference(taskA.dateFrom, taskA.dateTo);
-  const timeB = getTimeDifference(taskB.dateFrom, taskB.dateTo);
+  const timeA = taskA.dateFrom.subtract(taskA.dateTo);
+  const timeB = taskB.dateFrom.subtract(taskB.dateTo);
 
-  if (timeA < timeB) {
+  if (timeA > timeB) {
     return 1;
   }
-  if (timeA > timeB) {
+  if (timeA < timeB) {
     return -1;
   }
 
