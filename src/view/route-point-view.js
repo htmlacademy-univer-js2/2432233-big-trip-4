@@ -1,10 +1,9 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { formatPointDate, formatPointTime, getTimeDifference } from '../utils/date.js';
-import { getRandomArrayElement, getRandomInteger } from '../utils/common.js';
 
-function createSelectedOffersTemplate(offers) {
+function createSelectedOffersTemplate(offers, point) {
   return offers.map((offer) => `
-  ${getRandomInteger(0, 1) ? `<li class="event__offer">
+  ${point.offers.includes(offer.id) ? `<li class="event__offer">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${offer.price}</span>
@@ -20,7 +19,8 @@ function createRoutePointTemplate({ point, destinations, offers }) {
   const date = formatPointDate(point.dateFrom);
   const isActiveClassName = point.isFavorite ? 'event__favorite-btn--active' : '';
 
-  const destination = getRandomArrayElement(destinations);
+  const offersList = offers.find((offer) => offer.type === point.type).offers;
+  const destination = destinations.find((dest) => dest.id === point.destination);
 
   return `
   <li class="trip-events__item">
@@ -43,7 +43,7 @@ function createRoutePointTemplate({ point, destinations, offers }) {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${createSelectedOffersTemplate(offers)}
+        ${createSelectedOffersTemplate(offersList, point)}
       </ul>
       <button class="event__favorite-btn ${isActiveClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>

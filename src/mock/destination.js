@@ -14,12 +14,12 @@ function generatePictures(place) {
   return result;
 }
 
-function generateDestination() {
+function generateDestination(id) {
 
-  const place = getRandomArrayElement(PLACES);
+  const place = PLACES[id];
 
   return {
-    id: crypto.randomUUID(),
+    id: id,
     description: getRandomArrayElement(DESCRIPTIONS),
     name: place,
     pictures: generatePictures(place)

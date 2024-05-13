@@ -8,7 +8,7 @@ function generatePoint() {
   const offerIds = [];
 
   for (let i = 0; i < getRandomInteger(0, 5); i++) {
-    offerIds.push(crypto.randomUUID());
+    offerIds.push(String(getRandomInteger(1, 15)));
   }
 
   return {
@@ -16,7 +16,7 @@ function generatePoint() {
     basePrice: getRandomInteger(500, 2500),
     dateFrom: date,
     dateTo: getRandomDate(date),
-    destination: crypto.randomUUID(),
+    destination: getRandomInteger(1, 10),
     isFavorite: !!getRandomInteger(0, 1),
     offers: offerIds,
     type: getRandomArrayElement(TYPES)

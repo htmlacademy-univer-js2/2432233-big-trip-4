@@ -1,10 +1,10 @@
-import { getRandomInteger, getRandomArrayElement } from '../utils/common.js';
+import { getRandomInteger } from '../utils/common.js';
 import { OFFERS } from '../const.js';
 
-function generateOffer() {
+function generateOffer(id) {
   return {
-    id: crypto.randomUUID(),
-    title: getRandomArrayElement(OFFERS),
+    id: String(id),
+    title: OFFERS[id],
     price: getRandomInteger(100, 500)
   };
 }
