@@ -1,6 +1,8 @@
+import dayjs from 'dayjs';
+
 function sortPointsTime(taskA, taskB) {
-  const timeA = taskA.dateFrom.subtract(taskA.dateTo);
-  const timeB = taskB.dateFrom.subtract(taskB.dateTo);
+  const timeA = dayjs(taskA.dateFrom).subtract(dayjs(taskA.dateTo));
+  const timeB = dayjs(taskB.dateFrom).subtract(dayjs(taskB.dateTo));
 
   if (timeA > timeB) {
     return 1;
