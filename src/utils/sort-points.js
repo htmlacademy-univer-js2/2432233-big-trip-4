@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 
-function sortPointsTime(taskA, taskB) {
-  const timeA = dayjs(taskA.dateFrom).subtract(dayjs(taskA.dateTo));
-  const timeB = dayjs(taskB.dateFrom).subtract(dayjs(taskB.dateTo));
+function sortPointsTime(pointA, pointB) {
+  const timeA = dayjs(pointA.dateFrom).subtract(dayjs(pointA.dateTo));
+  const timeB = dayjs(pointB.dateFrom).subtract(dayjs(pointB.dateTo));
 
   if (timeA > timeB) {
     return 1;
@@ -14,15 +14,26 @@ function sortPointsTime(taskA, taskB) {
   return 0;
 }
 
-function sortPointsPrice(taskA, taskB) {
-  if (taskA.basePrice < taskB.basePrice) {
+function sortPointsPrice(pointA, pointB) {
+  if (pointA.basePrice < pointB.basePrice) {
     return 1;
   }
-  if (taskA.basePrice > taskB.basePrice) {
+  if (pointA.basePrice > pointB.basePrice) {
     return -1;
   }
 
   return 0;
 }
 
-export { sortPointsTime, sortPointsPrice };
+function sortPointsday(pointA, pointB) {
+  if (pointA.dateFrom < pointB.dateFrom) {
+    return -1;
+  }
+  if (pointA.dateFrom > pointB.dateFrom) {
+    return 1;
+  }
+
+  return 0;
+}
+
+export { sortPointsTime, sortPointsPrice, sortPointsday };

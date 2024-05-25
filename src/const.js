@@ -27,4 +27,28 @@ const SortType = {
   PRICE: 'price'
 };
 
-export { TYPES, DESCRIPTIONS, PLACES, OFFERS, POINTS_COUNT, SortType };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+const UserAction = {
+  UPDATE_POINT: 'UPDATE',
+  ADD_POINT: 'ADD',
+  DELETE_POINT: 'DELETE',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const EditingType = {
+  UPDATE: 'UPDATE',
+  NEW: 'NEW'
+};
+
+export { TYPES, DESCRIPTIONS, PLACES, OFFERS, POINTS_COUNT, SortType, FilterType, UserAction, UpdateType, EditingType };
