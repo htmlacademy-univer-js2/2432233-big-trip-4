@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { getRandomInteger } from './common';
 
 function formatPointDate(date) {
   return date ? dayjs(date).format('MMM D') : '';
@@ -30,19 +29,4 @@ function getTimeDifference(dateFrom, dateTo) {
   }
 }
 
-function getRandomDate(date = new Date()) {
-  return dayjs(date).add(getRandomInteger(30, 1500), 'minute').toDate();
-}
-
-function isMinorUpdate(pointA, pointB) {
-  const timeA = dayjs(pointA.dateFrom).subtract(dayjs(pointA.dateTo));
-  const timeB = dayjs(pointB.dateFrom).subtract(dayjs(pointB.dateTo));
-
-  const date = !dayjs(pointA.dateFrom).isSame(dayjs(pointB.dateFrom));
-  const price = pointA.basePrice !== pointB.basePrice;
-  const time = !dayjs(timeA).isSame(dayjs(timeB));
-
-  return date || price || time;
-}
-
-export { formatPointDate, formatPointTime, getTimeDifference, getRandomDate, formatEditDate, isMinorUpdate };
+export { formatPointDate, formatPointTime, getTimeDifference, formatEditDate };

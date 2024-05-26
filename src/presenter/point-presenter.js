@@ -1,13 +1,8 @@
 import EditingFormView from '../view/editing-form-view.js';
 import RoutePointView from '../view/route-point-view.js';
-import { render, replace, remove } from '../framework/render.js';
-import { UpdateType, UserAction } from '../const.js';
-// import { isMinorUpdate } from '../utils/date.js';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING'
-};
+import { render, replace, remove } from '../framework/render.js';
+import { UpdateType, UserAction, Mode } from '../const.js';
 
 export default class PointPresenter {
   #pointsListContainer = null;
@@ -112,14 +107,10 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    // const isMinor = isMinorUpdate(point, this.#point);
-
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
       point);
-
-    // this.#replaceEditToPoint();
   };
 
   #handleFavoriteClick = () => {

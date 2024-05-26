@@ -52,7 +52,7 @@ export default class SortingView extends AbstractView {
   }
 
   #sortTypeChangeHandler = (evt) => {
-    if (evt.target.tagName !== 'LABEL') {
+    if (evt.target.tagName !== 'LABEL' || !evt.target.hasAttribute('data-sort-type')) {
       return;
     }
     evt.preventDefault();

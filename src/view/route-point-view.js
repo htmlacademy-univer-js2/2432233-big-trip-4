@@ -3,11 +3,11 @@ import { formatPointDate, formatPointTime, getTimeDifference } from '../utils/da
 
 function createSelectedOffersTemplate(offers, point) {
   return offers.map((offer) => `
-  ${point.offers.includes(offer.id) ? `<li class="event__offer">
-    <span class="event__offer-title">${offer.title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offer.price}</span>
-  </li>
+    ${point.offers.includes(offer.id) ? `<li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </li>
   ` : ''}`).join('');
 }
 

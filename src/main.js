@@ -1,19 +1,17 @@
 import TripInfoView from './view/trip-info-view.js';
 import RoutePresenter from './presenter/route-presenter.js';
-
-import { render, RenderPosition } from './framework/render.js';
+import NewPointBtnPresenter from './presenter/new-point-btn-presenter.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 
 import PointsModel from './model/point-model.js';
 import DestinationsModel from './model/destination-model.js';
 import OffersModel from './model/offer-model.js';
 import FilterModel from './model/filter-model.js';
-import NewPointBtnPresenter from './presenter/new-point-btn-presenter.js';
-import FilterPresenter from './presenter/filter-presenter.js';
+
+import { render, RenderPosition } from './framework/render.js';
+import { AUTHORIZATION, END_POINT } from './const.js';
 
 import PointsApiService from './points-api-service.js';
-
-const AUTHORIZATION = 'Basic spveve93f4hg';
-const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
 
 const siteHeaderElement = document.querySelector('.page-header');
 const headerInfoElement = siteHeaderElement.querySelector('.trip-main');

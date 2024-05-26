@@ -18,14 +18,4 @@ export default class OffersModel {
   getByType(type) {
     return this.#allOffers.find((offer) => offer.type === type).offers;
   }
-
-  // getById(id) {
-  //   this.#allOffers.forEach((item) => {
-  //     const res = item.offers.find((offer) => offer.id === id);
-  //     if (res) {
-  //       return res;
-  //     }
-  //   });
-  //   return {};
-  // }
 }

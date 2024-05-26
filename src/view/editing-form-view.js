@@ -1,28 +1,11 @@
-import { formatEditDate } from '../utils/date.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES } from '../const.js';
-import { EditingType } from '../const.js';
+
+import { formatEditDate } from '../utils/date.js';
+import { TYPES,EditingType, BLANK_POINT, ButtonLabels } from '../const.js';
+import { capitalize } from '../utils/common.js';
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-
-const BLANK_POINT = {
-  basePrice: 1,
-  dateFrom: null,
-  dateTo: null,
-  destination: null,
-  isFavorite: false,
-  offers: [],
-  type: 'flight'
-};
-
-const ButtonLabels = {
-  CANCEL: 'Cancel',
-  DELETE_DEFAULT: 'Delete',
-  DELETE_IN_PROGRESS: 'Deleting...',
-  SAVE_DEFAULT: 'Save',
-  SAVE_IN_PROGRESS: 'Saving...'
-};
 
 function createPhotosTemplate(pictures) {
   return pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
@@ -50,7 +33,7 @@ function createTypesTemplate(point) {
     <div class="event__type-item">
       <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type"
         value="${type}" ${point.type === type ? 'checked' : ''}>
-      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalize(type)}</label>
     </div>`).join('');
 }
 
@@ -60,7 +43,7 @@ function createDestinationsTemplate(destinations) {
 
 function createDestinationsBlockTempalte(destination) {
   return `
-    ${destination.pictures.length > 0 ? `<section class="event__section  event__section--destination">
+    ${destination.pictures.length > 0 || destination.description ? `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destination.description}</p>
 
