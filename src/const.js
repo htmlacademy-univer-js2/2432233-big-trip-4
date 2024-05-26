@@ -54,6 +54,13 @@ const EditingType = {
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
 };
 
-export { TYPES, DESCRIPTIONS, PLACES, OFFERS, SortType, FilterType, UserAction, UpdateType, EditingType, Method };
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export { TYPES, DESCRIPTIONS, PLACES, OFFERS, SortType, FilterType, UserAction, UpdateType, EditingType, Method, TimeLimit };
