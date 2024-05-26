@@ -1,24 +1,4 @@
 const TYPES = ['taxi', 'bus', 'train', 'ship', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const PLACES = ['Amsterdam', 'Chamonix', 'Geneva', 'Moscow', 'Tokyo', 'Seoul', 'Miami', 'Omsk', 'London', 'Rome', 'Berlin'];
-const DESCRIPTIONS = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  'Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Fusce tristique felis at fermentum pharetra.',
-  'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-  'Sed sed nisi sed augue convallis suscipit in sed felis.',
-  'Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
-];
-const OFFERS = [
-  'Add luggage',
-  'Comfort class',
-  'Add meal',
-  'Choose seats',
-  'Travel by train',
-  'Registration of insurance',
-  'Car rental',
-  'Private transfer'
-];
 
 const SortType = {
   DAY: 'day',
@@ -63,4 +43,50 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-export { TYPES, DESCRIPTIONS, PLACES, OFFERS, SortType, FilterType, UserAction, UpdateType, EditingType, Method, TimeLimit };
+const AUTHORIZATION = 'Basic spveve93f4dhg';
+const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
+
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
+const BLANK_POINT = {
+  basePrice: 1,
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  isFavorite: false,
+  offers: [],
+  type: 'flight'
+};
+
+const ButtonLabels = {
+  CANCEL: 'Cancel',
+  DELETE_DEFAULT: 'Delete',
+  DELETE_IN_PROGRESS: 'Deleting...',
+  SAVE_DEFAULT: 'Save',
+  SAVE_IN_PROGRESS: 'Saving...'
+};
+
+const FilterMessage = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.FUTURE]: 'There are no future events now',
+};
+
+const LoadingMessage = {
+  LOADING: 'Loading',
+  ERROR: 'Failed to load latest route information'
+};
+
+const DESTINATIONS_TRIP_INFO_MAX_COUNT = 3;
+
+export {
+  TYPES, SortType, FilterType, UserAction,
+  UpdateType, EditingType, Method, TimeLimit,
+  AUTHORIZATION, END_POINT, Mode, BLANK_POINT,
+  ButtonLabels, FilterMessage, LoadingMessage,
+  DESTINATIONS_TRIP_INFO_MAX_COUNT
+};

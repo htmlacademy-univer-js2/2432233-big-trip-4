@@ -1,28 +1,12 @@
-import { formatEditDate } from '../utils/date.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES } from '../const.js';
-import { EditingType } from '../const.js';
 
+import { formatEditDate } from '../utils/date.js';
+import { TYPES,EditingType, BLANK_POINT, ButtonLabels } from '../const.js';
+import { capitalize } from '../utils/common.js';
+
+import { encode } from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-
-const BLANK_POINT = {
-  basePrice: 1,
-  dateFrom: null,
-  dateTo: null,
-  destination: null,
-  isFavorite: false,
-  offers: [],
-  type: 'flight'
-};
-
-const ButtonLabels = {
-  CANCEL: 'Cancel',
-  DELETE_DEFAULT: 'Delete',
-  DELETE_IN_PROGRESS: 'Deleting...',
-  SAVE_DEFAULT: 'Save',
-  SAVE_IN_PROGRESS: 'Saving...'
-};
 
 function createPhotosTemplate(pictures) {
   return pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
@@ -50,17 +34,17 @@ function createTypesTemplate(point) {
     <div class="event__type-item">
       <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type"
         value="${type}" ${point.type === type ? 'checked' : ''}>
-      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalize(type)}</label>
     </div>`).join('');
 }
 
 function createDestinationsTemplate(destinations) {
-  return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
+  return destinations.map((destination) => `<option value="${encode(destination.name)}"></option>`).join('');
 }
 
 function createDestinationsBlockTempalte(destination) {
   return `
-    ${destination.pictures.length > 0 ? `<section class="event__section  event__section--destination">
+    ${destination.pictures.length > 0 || destination.description ? `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destination.description}</p>
 
@@ -122,7 +106,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${encode(point.type)}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
@@ -138,10 +122,10 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${point.type}
+              ${encode(point.type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-              value="${destination ? destination.name : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+              value="${destination ? encode(destination.name) : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
             <datalist id="destination-list-1">
 
               ${createDestinationsTemplate(destinations)}
@@ -165,7 +149,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
               &euro;
             </label>
             <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" name="event-price"
-              value="${point.basePrice}" ${isDisabled ? 'disabled' : ''}>
+              value="${encode(String(point.basePrice))}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           ${createControlsButtonsTemplate({ type, isSaving, isDeleting, isDisabled })}
@@ -226,14 +210,52 @@ export default class EditingFormView extends AbstractStatefulView {
     });
   }
 
-  #submitClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleSubmitClick(EditingFormView.parseStateToPoint(this._state));
+  reset = (point) => this.updateElement({point});
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
   };
 
-  #closeClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleCloseClick();
+  #setDatepickers = () => {
+    const [dateFromElem, dateToElem] = this.element.querySelectorAll('.event__input--time');
+    const commonConfig = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      locale: {
+        firstDayOfWeek: 1,
+      },
+      'time_24hr': true
+    };
+
+    this.#datePickerFrom = flatpickr(
+      dateFromElem,
+      {
+        ...commonConfig,
+        defaultDate: this._state.point.dateFrom,
+        onClose: this.#dateFromCloseHandler,
+        maxDate: this._state.point.dateTo
+      }
+    );
+
+    this.#datePickerTo = flatpickr(
+      dateToElem,
+      {
+        ...commonConfig,
+        defaultDate: this._state.point.dateTo,
+        onClose: this.#dateToCloseHandler,
+        minDate: this._state.point.dateFrom
+      }
+    );
   };
 
   _restoreHandlers = () => {
@@ -264,6 +286,16 @@ export default class EditingFormView extends AbstractStatefulView {
     }
 
     this.#setDatepickers();
+  };
+
+  #submitClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSubmitClick(EditingFormView.parseStateToPoint(this._state));
+  };
+
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseClick();
   };
 
   #typeChangeHandler = (evt) => {
@@ -314,36 +346,6 @@ export default class EditingFormView extends AbstractStatefulView {
     this.#handleEditReset(EditingFormView.parseStateToPoint(this._state));
   };
 
-  reset = (point) => this.updateElement({point});
-
-  static parsePointToState = ({
-    point,
-    isDisabled = false,
-    isSaving = false,
-    isDeleting = false
-  }) => ({
-    point,
-    isDisabled,
-    isSaving,
-    isDeleting
-  });
-
-  static parseStateToPoint = (state) => state.point;
-
-  removeElement = () => {
-    super.removeElement();
-
-    if (this.#datePickerFrom) {
-      this.#datePickerFrom.destroy();
-      this.#datePickerFrom = null;
-    }
-
-    if (this.#datePickerTo) {
-      this.#datePickerTo.destroy();
-      this.#datePickerTo = null;
-    }
-  };
-
   #dateFromCloseHandler = ([userDate]) => {
     this._setState({
       point: {
@@ -364,35 +366,17 @@ export default class EditingFormView extends AbstractStatefulView {
     this.#datePickerFrom.set('maxDate', this._state.point.dateTo);
   };
 
-  #setDatepickers = () => {
-    const [dateFromElem, dateToElem] = this.element.querySelectorAll('.event__input--time');
-    const commonConfig = {
-      dateFormat: 'd/m/y H:i',
-      enableTime: true,
-      locale: {
-        firstDayOfWeek: 1,
-      },
-      'time_24hr': true
-    };
+  static parsePointToState = ({
+    point,
+    isDisabled = false,
+    isSaving = false,
+    isDeleting = false
+  }) => ({
+    point,
+    isDisabled,
+    isSaving,
+    isDeleting
+  });
 
-    this.#datePickerFrom = flatpickr(
-      dateFromElem,
-      {
-        ...commonConfig,
-        defaultDate: this._state.point.dateFrom,
-        onClose: this.#dateFromCloseHandler,
-        maxDate: this._state.point.dateTo
-      }
-    );
-
-    this.#datePickerTo = flatpickr(
-      dateToElem,
-      {
-        ...commonConfig,
-        defaultDate: this._state.point.dateTo,
-        onClose: this.#dateToCloseHandler,
-        minDate: this._state.point.dateFrom
-      }
-    );
-  };
+  static parseStateToPoint = (state) => state.point;
 }

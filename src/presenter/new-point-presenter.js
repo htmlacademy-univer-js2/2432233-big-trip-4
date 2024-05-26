@@ -52,27 +52,6 @@ export default class NewPointPresenter {
     this.#handleDestroy({ isCanceled });
   };
 
-  #formSubmitHandler = (point) => {
-    this.#handleDataChange(
-      UserAction.ADD_POINT,
-      UpdateType.MINOR,
-      point
-    );
-
-    // this.destroy({ isCanceled: false });
-  };
-
-  #resetButtonClickHandler = () => {
-    this.destroy();
-  };
-
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      this.destroy();
-    }
-  };
-
   setSaving = () => {
     this.#pointNewComponent.updateElement({
       isDisabled: true,
@@ -90,5 +69,24 @@ export default class NewPointPresenter {
     };
 
     this.#pointNewComponent.shake(resetFormState);
+  };
+
+  #formSubmitHandler = (point) => {
+    this.#handleDataChange(
+      UserAction.ADD_POINT,
+      UpdateType.MINOR,
+      point
+    );
+  };
+
+  #resetButtonClickHandler = () => {
+    this.destroy();
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      this.destroy();
+    }
   };
 }
