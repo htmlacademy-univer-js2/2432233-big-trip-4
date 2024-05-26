@@ -1,28 +1,31 @@
-import { TYPES } from '../const.js';
-import { getRandomInteger } from '../utils/common.js';
-import { generateOffer } from '../mock/offer.js';
-
 export default class OffersModel {
-  #allOffers = TYPES.map((type) => ({
-    type,
-    offers: Array.from({ length: getRandomInteger(1, 7) }, (_, index) => generateOffer(index))
-  }));
+  #allOffers = [];
+  #service = null;
+
+  constructor(service) {
+    this.#service = service;
+  }
+
+  async init() {
+    this.#allOffers = await this.#service.offers;
+    return this.#allOffers;
+  }
 
   get allOffers() {
     return this.#allOffers;
   }
 
   getByType(type) {
-    return this.#allOffers.find((offer) => offer.type === type);
+    return this.#allOffers.find((offer) => offer.type === type).offers;
   }
 
-  getById(id) {
-    this.#allOffers.forEach((item) => {
-      const res = item.offers.find((offer) => offer.id === id);
-      if (res) {
-        return res;
-      }
-    });
-    return {};
-  }
+  // getById(id) {
+  //   this.#allOffers.forEach((item) => {
+  //     const res = item.offers.find((offer) => offer.id === id);
+  //     if (res) {
+  //       return res;
+  //     }
+  //   });
+  //   return {};
+  // }
 }

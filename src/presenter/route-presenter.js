@@ -1,6 +1,6 @@
 import ListOfRoutePointsView from '../view/list-of-route-points-view.js';
 import SortingView from '../view/sorting-view.js';
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import { FilterType, SortType } from '../const.js';
@@ -8,6 +8,7 @@ import { sortPointsPrice, sortPointsTime, sortPointsday } from '../utils/sort-po
 import { filter } from '../utils/filter.js';
 import { UpdateType, UserAction } from '../const.js';
 import NewPointPresenter from './new-point-presenter.js';
+import LoadingView from '../view/loading-view.js';
 
 export default class RoutePresenter {
   #routeContainer = null;
@@ -15,8 +16,6 @@ export default class RoutePresenter {
   #destinationsModel = null;
   #offersModel = null;
   #filterModel = null;
-
-  #destinations = [];
 
   #pointsListComponent = new ListOfRoutePointsView();
   #sortingComponent = null;
@@ -28,6 +27,10 @@ export default class RoutePresenter {
   #isCreating = false;
   #newPointBtnPresenter = null;
   #newPointPresenter = null;
+
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
+  #isLoadingError = false;
 
   constructor({ routeContainer, pointsModel, destinationsModel, offersModel, filterModel, newPointBtnPresenter }) {
     this.#routeContainer = routeContainer;
@@ -66,8 +69,6 @@ export default class RoutePresenter {
   }
 
   init() {
-    this.#destinations = [...this.#destinationsModel.destinations];
-
     this.#renderRoute();
   }
 
@@ -93,10 +94,10 @@ export default class RoutePresenter {
     this.#newPointPresenter.destroy();
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = async (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointsPresenters?.get(data.id)?.init(data, this.#destinations, this.#offersModel);
+        this.#pointsPresenters?.get(data.id)?.init(data, this.#destinationsModel, this.#offersModel);
         break;
       case UpdateType.MINOR:
         this.#clearRoute();
@@ -106,10 +107,16 @@ export default class RoutePresenter {
         this.#clearRoute(true);
         this.#renderRoute();
         break;
+      case UpdateType.INIT:
+        this.#isLoadingError = data.isError;
+        this.#isLoading = false;
+        this.#clearRoute();
+        this.#renderRoute();
+        break;
     }
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoint(updateType, update);
@@ -155,9 +162,9 @@ export default class RoutePresenter {
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
-
+    // console.log(this.#destinations);
     this.#pointsPresenters.set(point.id, pointPresenter);
-    pointPresenter.init(point, this.#destinations, this.#offersModel);
+    pointPresenter.init(point, this.#destinationsModel, this.#offersModel);
   }
 
   #renderPointsListContainer() {
@@ -170,6 +177,10 @@ export default class RoutePresenter {
     });
   }
 
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#routeContainer, RenderPosition.AFTERBEGIN);
+  };
+
   #clearPointsList() {
     this.#pointsPresenters.forEach((presenter) => presenter.destroy());
     this.#pointsPresenters.clear();
@@ -177,6 +188,16 @@ export default class RoutePresenter {
   }
 
   #renderRoute = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    if (this.#isLoadingError) {
+      this.#clearRoute({ resetSortType: true });
+      return;
+    }
+
     if (this.points.length === 0 && !this.#isCreating) {
       this.#renderEmpty();
       return;
@@ -192,6 +213,7 @@ export default class RoutePresenter {
     remove(this.#emptyListComponent);
     remove(this.#sortingComponent);
     this.#sortingComponent = null;
+    remove(this.#loadingComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;

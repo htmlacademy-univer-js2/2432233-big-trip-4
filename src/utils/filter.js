@@ -1,8 +1,10 @@
+import dayjs from 'dayjs';
+
 const filter = {
   everything: (points) => points,
-  future: (points) => points.filter((point) => point.dateFrom > new Date()),
-  present: (points) => points.filter((point) => point.dateFrom <= new Date() && point.dateTo >= new Date()),
-  past: (points) => points.filter((point) => point.dateTo < new Date())
+  future: (points) => points.filter((point) => dayjs().isBefore(point.dateFrom)),
+  present: (points) => points.filter((point) => (dayjs().isAfter(point.dateFrom) && dayjs().isBefore(point.dateTo))),
+  past: (points) => points.filter((point) => dayjs().isAfter(point.dateTo))
 };
 
 export { filter };

@@ -19,7 +19,6 @@ const OFFERS = [
   'Car rental',
   'Private transfer'
 ];
-const POINTS_COUNT = 3;
 
 const SortType = {
   DAY: 'day',
@@ -44,6 +43,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 const EditingType = {
@@ -51,4 +51,9 @@ const EditingType = {
   NEW: 'NEW'
 };
 
-export { TYPES, DESCRIPTIONS, PLACES, OFFERS, POINTS_COUNT, SortType, FilterType, UserAction, UpdateType, EditingType };
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+export { TYPES, DESCRIPTIONS, PLACES, OFFERS, SortType, FilterType, UserAction, UpdateType, EditingType, Method };

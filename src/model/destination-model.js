@@ -1,7 +1,15 @@
-import { generateDestination } from '../mock/destination';
-
 export default class DestinationsModel {
-  #destinations = Array.from({length: 10}, (_, index) => generateDestination(index + 1));
+  #destinations = [];
+  #service = null;
+
+  constructor(service) {
+    this.#service = service;
+  }
+
+  async init() {
+    this.#destinations = await this.#service.destinations;
+    return this.#destinations;
+  }
 
   get destinations() {
     return this.#destinations;
