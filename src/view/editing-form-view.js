@@ -315,7 +315,7 @@ export default class EditingFormView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        dateFrom: userDate
+        dateTo: userDate
       }
     });
     this.#datePickerFrom.set('maxDate', this._state.point.dateTo);
