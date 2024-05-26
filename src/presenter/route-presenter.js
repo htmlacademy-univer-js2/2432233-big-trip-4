@@ -8,7 +8,7 @@ import NewPointPresenter from './new-point-presenter.js';
 
 import { render, remove, RenderPosition } from '../framework/render.js';
 import { FilterType, SortType, UpdateType, UserAction, TimeLimit } from '../const.js';
-import { sortPointsPrice, sortPointsTime, sortPointsday } from '../utils/sort-points.js';
+import { sort } from '../utils/sort-points.js';
 import { filter } from '../utils/filter.js';
 
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
@@ -64,16 +64,7 @@ export default class RoutePresenter {
     const filterType = this.#filterModel.get();
     const filteredPoints = filter[filterType](this.#pointsModel.points);
 
-    switch (this.#currentSortType) {
-      case SortType.DAY:
-        return filteredPoints.sort(sortPointsday);
-      case SortType.PRICE:
-        return filteredPoints.sort(sortPointsPrice);
-      case SortType.TIME:
-        return filteredPoints.sort(sortPointsTime);
-    }
-
-    return filteredPoints;
+    return sort[this.#currentSortType](filteredPoints);
   }
 
   init() {

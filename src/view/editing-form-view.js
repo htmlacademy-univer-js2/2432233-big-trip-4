@@ -4,6 +4,7 @@ import { formatEditDate } from '../utils/date.js';
 import { TYPES,EditingType, BLANK_POINT, ButtonLabels } from '../const.js';
 import { capitalize } from '../utils/common.js';
 
+import { encode } from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -38,7 +39,7 @@ function createTypesTemplate(point) {
 }
 
 function createDestinationsTemplate(destinations) {
-  return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
+  return destinations.map((destination) => `<option value="${encode(destination.name)}"></option>`).join('');
 }
 
 function createDestinationsBlockTempalte(destination) {
@@ -105,7 +106,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${encode(point.type)}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
@@ -121,10 +122,10 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${point.type}
+              ${encode(point.type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-              value="${destination ? destination.name : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+              value="${destination ? encode(destination.name) : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
             <datalist id="destination-list-1">
 
               ${createDestinationsTemplate(destinations)}
@@ -148,7 +149,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
               &euro;
             </label>
             <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" name="event-price"
-              value="${point.basePrice}" ${isDisabled ? 'disabled' : ''}>
+              value="${encode(String(point.basePrice))}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           ${createControlsButtonsTemplate({ type, isSaving, isDeleting, isDisabled })}

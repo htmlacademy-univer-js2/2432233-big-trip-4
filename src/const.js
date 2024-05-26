@@ -81,9 +81,12 @@ const LoadingMessage = {
   ERROR: 'Failed to load latest route information'
 };
 
+const DESTINATIONS_TRIP_INFO_MAX_COUNT = 3;
+
 export {
   TYPES, SortType, FilterType, UserAction,
   UpdateType, EditingType, Method, TimeLimit,
   AUTHORIZATION, END_POINT, Mode, BLANK_POINT,
-  ButtonLabels, FilterMessage, LoadingMessage
+  ButtonLabels, FilterMessage, LoadingMessage,
+  DESTINATIONS_TRIP_INFO_MAX_COUNT
 };

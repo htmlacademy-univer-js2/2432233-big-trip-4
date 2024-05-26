@@ -12,6 +12,10 @@ function formatEditDate(date) {
   return date ? dayjs(date).format('DD/MM/YY HH:mm') : '';
 }
 
+function formatTripInfoDate(date) {
+  return date ? dayjs(date).format('DD MMM') : '';
+}
+
 function getTimeDifference(dateFrom, dateTo) {
   const timeDifference = dayjs(dateTo).subtract(dayjs(dateFrom));
 
@@ -29,4 +33,4 @@ function getTimeDifference(dateFrom, dateTo) {
   }
 }
 
-export { formatPointDate, formatPointTime, getTimeDifference, formatEditDate };
+export { formatPointDate, formatPointTime, getTimeDifference, formatEditDate, formatTripInfoDate };
