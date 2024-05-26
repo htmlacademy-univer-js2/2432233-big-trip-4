@@ -30,12 +30,19 @@ function getTimeDifference(dateFrom, dateTo) {
   }
 }
 
-// console.log(getTimeDifference(new Date(2023, 11, 4, 10, 0), new Date(2023, 11, 6, 13, 20)));
-
 function getRandomDate(date = new Date()) {
-  return dayjs(date).add(getRandomInteger(30, 1500), 'minute');
+  return dayjs(date).add(getRandomInteger(30, 1500), 'minute').toDate();
 }
 
-// console.log(getRandomDate().format('YYYY MMMM DD[D] HH[H] mm[M]'));
+function isMinorUpdate(pointA, pointB) {
+  const timeA = dayjs(pointA.dateFrom).subtract(dayjs(pointA.dateTo));
+  const timeB = dayjs(pointB.dateFrom).subtract(dayjs(pointB.dateTo));
 
-export { formatPointDate, formatPointTime, getTimeDifference, getRandomDate, formatEditDate };
+  const date = !dayjs(pointA.dateFrom).isSame(dayjs(pointB.dateFrom));
+  const price = pointA.basePrice !== pointB.basePrice;
+  const time = !dayjs(timeA).isSame(dayjs(timeB));
+
+  return date || price || time;
+}
+
+export { formatPointDate, formatPointTime, getTimeDifference, getRandomDate, formatEditDate, isMinorUpdate };

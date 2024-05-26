@@ -1,6 +1,7 @@
 import { formatEditDate } from '../utils/date.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { TYPES } from '../const.js';
+import { EditingType } from '../const.js';
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -44,10 +45,29 @@ function createDestinationsTemplate(destinations) {
   return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 }
 
-function createEditingFormTemplate({ point, destinations, offerItem }) {
+function createRollupBtn() {
+  return `
+    <button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`;
+}
 
-  const dateFrom = formatEditDate(point.dateFrom);
-  const dateTo = formatEditDate(point.dateTo);
+function createResetBtnTemplate(type) {
+  const label = type === EditingType.NEW ? 'Cancel' : 'Delete';
+  return `<button class="event__reset-btn" type="reset">${label}</button>`;
+}
+
+function createControlsButtonsTemplate(type) {
+  return `
+    ${createResetBtnTemplate(type)}
+    ${type === EditingType.UPDATE ? createRollupBtn() : ''}
+  `;
+}
+
+function createEditingFormTemplate({ point, destinations, offerItem, type }) {
+
+  const dateFrom = formatEditDate(point.dateFrom ? point.dateFrom : '');
+  const dateTo = formatEditDate(point.dateTo ? point.dateTo : '');
 
   const offersList = offerItem.find((offer) => offer.type === point.type).offers;
 
@@ -78,7 +98,8 @@ function createEditingFormTemplate({ point, destinations, offerItem }) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${point.type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
+              value="${destination ? destination.name : ''}" list="destination-list-1">
             <datalist id="destination-list-1">
 
               ${createDestinationsTemplate(destinations)}
@@ -88,7 +109,8 @@ function createEditingFormTemplate({ point, destinations, offerItem }) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time"
+              value="${dateFrom}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
             <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo}">
@@ -99,14 +121,13 @@ function createEditingFormTemplate({ point, destinations, offerItem }) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${point.basePrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+
+          ${createControlsButtonsTemplate(type)}
+
         </header>
         <section class="event__details">
 
@@ -142,16 +163,21 @@ export default class EditingFormView extends AbstractStatefulView {
 
   #handleSubmitClick = null;
   #handleCloseClick = null;
+  #handleEditReset = null;
 
   #datePickerFrom = null;
   #datePickerTo = null;
 
-  constructor({ point = BLANK_POINT, destinations, offerItem, onSubmit, onClose }) {
+  #eventType = null;
+
+  constructor({ point = BLANK_POINT, destinations, offerItem, onSubmit, onClose, onDelete, eventType = EditingType.UPDATE }) {
     super();
     this.#destinations = destinations;
     this.#offerItem = offerItem;
     this.#handleSubmitClick = onSubmit;
     this.#handleCloseClick = onClose;
+    this.#handleEditReset = onDelete;
+    this.#eventType = eventType;
 
     this._setState(EditingFormView.parsePointToState({point}));
 
@@ -162,7 +188,8 @@ export default class EditingFormView extends AbstractStatefulView {
     return createEditingFormTemplate({
       point: this._state.point,
       destinations: this.#destinations,
-      offerItem: this.#offerItem
+      offerItem: this.#offerItem,
+      type: this.#eventType
     });
   }
 
@@ -180,9 +207,6 @@ export default class EditingFormView extends AbstractStatefulView {
     this.element.querySelector('form')
       .addEventListener('submit', this.#submitClickHandler);
 
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#closeClickHandler);
-
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
 
@@ -194,6 +218,17 @@ export default class EditingFormView extends AbstractStatefulView {
 
     this.element.querySelector('.event__input--price')
       .addEventListener('change', this.#priceChangeHandler);
+
+    if (this.#eventType === EditingType.UPDATE) {
+      this.element.querySelector('.event__rollup-btn')
+        ?.addEventListener('click', this.#closeClickHandler);
+      this.element.querySelector('.event--edit')
+        .addEventListener('reset', this.#deleteButtonClickHandler);
+    }
+    if (this.#eventType === EditingType.NEW) {
+      this.element.querySelector('.event__reset-btn')
+        .addEventListener('click', this.#deleteButtonClickHandler);
+    }
 
     this.#setDatepickers();
   };
@@ -241,6 +276,11 @@ export default class EditingFormView extends AbstractStatefulView {
     });
   };
 
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditReset(EditingFormView.parseStateToPoint(this._state));
+  };
+
   reset = (point) => this.updateElement({point});
 
   static parsePointToState = (point) => ({ ...point });
@@ -275,7 +315,7 @@ export default class EditingFormView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        dateFrom: userDate
+        dateTo: userDate
       }
     });
     this.#datePickerFrom.set('maxDate', this._state.point.dateTo);
