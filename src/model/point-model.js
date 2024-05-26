@@ -50,13 +50,24 @@ export default class PointsModel extends Observable {
     }
   }
 
-  addPoint(updateType, newPoint) {
-    this.#points.push(newPoint);
-    this._notify(updateType, newPoint);
+  async addPoint(updateType, point) {
+    try {
+      const newPoint = await this.#service.addPoint(adaptToServer(point));
+      const adaptedPoint = adaptToClient(newPoint);
+      this.#points.push(adaptedPoint);
+      this._notify(updateType, adaptedPoint);
+    } catch {
+      throw new Error('Невозможно создать точку');
+    }
   }
 
-  deletePoint(updateType, deletedPoint) {
-    this.#points = this.#points.filter((point) => point.id !== deletedPoint.id);
-    this._notify(updateType);
+  async deletePoint(updateType, point) {
+    try {
+      await this.#service.deletePoint(point);
+      this.#points = this.#points.filter((pointItem) => pointItem.id !== point.id);
+      this._notify(updateType);
+    } catch {
+      throw new Error('Невозможно удалить точку');
+    }
   }
 }

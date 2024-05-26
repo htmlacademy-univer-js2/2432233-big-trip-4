@@ -2,7 +2,7 @@ import EditingFormView from '../view/editing-form-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import { render, replace, remove } from '../framework/render.js';
 import { UpdateType, UserAction } from '../const.js';
-import { isMinorUpdate } from '../utils/date.js';
+// import { isMinorUpdate } from '../utils/date.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -112,14 +112,14 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    const isMinor = isMinorUpdate(point, this.#point);
+    // const isMinor = isMinorUpdate(point, this.#point);
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      isMinor ? UpdateType.MINOR : UpdateType.PATCH,
+      UpdateType.MINOR,
       point);
 
-    this.#replaceEditToPoint();
+    // this.#replaceEditToPoint();
   };
 
   #handleFavoriteClick = () => {
@@ -136,5 +136,39 @@ export default class PointPresenter {
       UpdateType.MINOR,
       point
     );
+  };
+
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true
+      });
+    }
+  };
+
+  setDeleting = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isDeleting: true
+    });
+  };
+
+  setAborting = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+    }
+
+    if (this.#mode === Mode.EDITING) {
+      const resetFormState = () => {
+        this.#pointEditComponent.updateElement({
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        });
+      };
+
+      this.#pointEditComponent.shake(resetFormState);
+    }
   };
 }
