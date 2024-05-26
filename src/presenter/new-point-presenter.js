@@ -59,7 +59,7 @@ export default class NewPointPresenter {
       point
     );
 
-    this.destroy({ isCanceled: false });
+    // this.destroy({ isCanceled: false });
   };
 
   #resetButtonClickHandler = () => {
