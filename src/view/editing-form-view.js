@@ -210,14 +210,52 @@ export default class EditingFormView extends AbstractStatefulView {
     });
   }
 
-  #submitClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleSubmitClick(EditingFormView.parseStateToPoint(this._state));
+  reset = (point) => this.updateElement({point});
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
   };
 
-  #closeClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleCloseClick();
+  #setDatepickers = () => {
+    const [dateFromElem, dateToElem] = this.element.querySelectorAll('.event__input--time');
+    const commonConfig = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      locale: {
+        firstDayOfWeek: 1,
+      },
+      'time_24hr': true
+    };
+
+    this.#datePickerFrom = flatpickr(
+      dateFromElem,
+      {
+        ...commonConfig,
+        defaultDate: this._state.point.dateFrom,
+        onClose: this.#dateFromCloseHandler,
+        maxDate: this._state.point.dateTo
+      }
+    );
+
+    this.#datePickerTo = flatpickr(
+      dateToElem,
+      {
+        ...commonConfig,
+        defaultDate: this._state.point.dateTo,
+        onClose: this.#dateToCloseHandler,
+        minDate: this._state.point.dateFrom
+      }
+    );
   };
 
   _restoreHandlers = () => {
@@ -248,6 +286,16 @@ export default class EditingFormView extends AbstractStatefulView {
     }
 
     this.#setDatepickers();
+  };
+
+  #submitClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSubmitClick(EditingFormView.parseStateToPoint(this._state));
+  };
+
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseClick();
   };
 
   #typeChangeHandler = (evt) => {
@@ -298,36 +346,6 @@ export default class EditingFormView extends AbstractStatefulView {
     this.#handleEditReset(EditingFormView.parseStateToPoint(this._state));
   };
 
-  reset = (point) => this.updateElement({point});
-
-  static parsePointToState = ({
-    point,
-    isDisabled = false,
-    isSaving = false,
-    isDeleting = false
-  }) => ({
-    point,
-    isDisabled,
-    isSaving,
-    isDeleting
-  });
-
-  static parseStateToPoint = (state) => state.point;
-
-  removeElement = () => {
-    super.removeElement();
-
-    if (this.#datePickerFrom) {
-      this.#datePickerFrom.destroy();
-      this.#datePickerFrom = null;
-    }
-
-    if (this.#datePickerTo) {
-      this.#datePickerTo.destroy();
-      this.#datePickerTo = null;
-    }
-  };
-
   #dateFromCloseHandler = ([userDate]) => {
     this._setState({
       point: {
@@ -348,35 +366,17 @@ export default class EditingFormView extends AbstractStatefulView {
     this.#datePickerFrom.set('maxDate', this._state.point.dateTo);
   };
 
-  #setDatepickers = () => {
-    const [dateFromElem, dateToElem] = this.element.querySelectorAll('.event__input--time');
-    const commonConfig = {
-      dateFormat: 'd/m/y H:i',
-      enableTime: true,
-      locale: {
-        firstDayOfWeek: 1,
-      },
-      'time_24hr': true
-    };
+  static parsePointToState = ({
+    point,
+    isDisabled = false,
+    isSaving = false,
+    isDeleting = false
+  }) => ({
+    point,
+    isDisabled,
+    isSaving,
+    isDeleting
+  });
 
-    this.#datePickerFrom = flatpickr(
-      dateFromElem,
-      {
-        ...commonConfig,
-        defaultDate: this._state.point.dateFrom,
-        onClose: this.#dateFromCloseHandler,
-        maxDate: this._state.point.dateTo
-      }
-    );
-
-    this.#datePickerTo = flatpickr(
-      dateToElem,
-      {
-        ...commonConfig,
-        defaultDate: this._state.point.dateTo,
-        onClose: this.#dateToCloseHandler,
-        minDate: this._state.point.dateFrom
-      }
-    );
-  };
+  static parseStateToPoint = (state) => state.point;
 }

@@ -4,6 +4,7 @@ import { render, replace, remove, RenderPosition } from '../framework/render.js'
 export default class TripInfoPresenter {
   #container = null;
   #tripInfoComponent = null;
+
   #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;

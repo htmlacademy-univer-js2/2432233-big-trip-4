@@ -17,7 +17,6 @@ const headerInfoElement = siteHeaderElement.querySelector('.trip-main');
 const siteMainElement = document.querySelector('.trip-events');
 const filterElement = headerInfoElement.querySelector('.trip-controls__filters');
 
-
 const pointsApiService = new PointsApiService(END_POINT, AUTHORIZATION);
 const destinationsModel = new DestinationsModel(pointsApiService);
 const offersModel = new OffersModel(pointsApiService);
