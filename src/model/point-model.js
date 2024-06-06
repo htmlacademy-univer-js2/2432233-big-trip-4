@@ -33,9 +33,10 @@ export default class PointsModel extends Observable {
       const points = await this.#service.points;
       this.#points = points.map(adaptToClient);
       this._notify(UpdateType.INIT, {isError: false});
-    } catch {
+    } catch (error) {
       this.#points = [];
       this._notify(UpdateType.INIT, {isError: true});
+      throw new Error('Error initializing points:', error);
     }
   }
 
@@ -45,8 +46,8 @@ export default class PointsModel extends Observable {
       const adaptedPoint = adaptToClient(updatedPoint);
       this.#points = updateItem(this.#points, adaptedPoint);
       this._notify(updateType, adaptedPoint);
-    } catch {
-      throw new Error('Невозможно обновить точку');
+    } catch (error) {
+      throw new Error('Невозможно обновить точку:', error);
     }
   }
 
@@ -56,8 +57,8 @@ export default class PointsModel extends Observable {
       const adaptedPoint = adaptToClient(newPoint);
       this.#points.push(adaptedPoint);
       this._notify(updateType, adaptedPoint);
-    } catch {
-      throw new Error('Невозможно создать точку');
+    } catch (error) {
+      throw new Error('Невозможно создать точку:', error);
     }
   }
 
@@ -66,8 +67,8 @@ export default class PointsModel extends Observable {
       await this.#service.deletePoint(point);
       this.#points = this.#points.filter((pointItem) => pointItem.id !== point.id);
       this._notify(updateType);
-    } catch {
-      throw new Error('Невозможно удалить точку');
+    } catch (error) {
+      throw new Error('Невозможно удалить точку:', error);
     }
   }
 }

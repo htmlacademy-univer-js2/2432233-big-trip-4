@@ -42,7 +42,7 @@ function createDestinationsTemplate(destinations) {
   return destinations.map((destination) => `<option value="${encode(destination.name)}"></option>`).join('');
 }
 
-function createDestinationsBlockTempalte(destination) {
+function createDestinationsBlockTemplate(destination) {
   return `
     ${destination.pictures.length > 0 || destination.description ? `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -166,7 +166,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
 
           </section>` : ''}
 
-          ${point.destination ? createDestinationsBlockTempalte(destination) : ''}
+          ${point.destination ? createDestinationsBlockTemplate(destination) : ''}
 
         </section>
       </form>

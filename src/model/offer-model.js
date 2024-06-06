@@ -15,7 +15,13 @@ export default class OffersModel {
   }
 
   async init() {
-    this.#allOffers = await this.#service.offers;
+    try {
+      this.#allOffers = await this.#service.offers;
+    } catch (error) {
+      this.#allOffers = [];
+      throw new Error('Error initializing offers:', error);
+    }
+
     return this.#allOffers;
   }
 }
