@@ -52,7 +52,7 @@ const Mode = {
 };
 
 const BLANK_POINT = {
-  basePrice: 1,
+  basePrice: 0,
   dateFrom: null,
   dateTo: null,
   destination: null,
@@ -77,7 +77,7 @@ const FilterMessage = {
 };
 
 const LoadingMessage = {
-  LOADING: 'Loading',
+  LOADING: 'Loading...',
   ERROR: 'Failed to load latest route information'
 };
 

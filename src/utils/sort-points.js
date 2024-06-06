@@ -1,46 +1,25 @@
 import dayjs from 'dayjs';
 import { SortType } from '../const';
 
-function sortPointsTime(pointA, pointB) {
+function sortPointsByTime(pointA, pointB) {
   const timeA = dayjs(pointA.dateFrom).subtract(dayjs(pointA.dateTo));
   const timeB = dayjs(pointB.dateFrom).subtract(dayjs(pointB.dateTo));
 
-  if (timeA > timeB) {
-    return 1;
-  }
-  if (timeA < timeB) {
-    return -1;
-  }
-
-  return 0;
+  return timeA - timeB;
 }
 
-function sortPointsPrice(pointA, pointB) {
-  if (pointA.basePrice < pointB.basePrice) {
-    return 1;
-  }
-  if (pointA.basePrice > pointB.basePrice) {
-    return -1;
-  }
-
-  return 0;
+function sortPointsByPrice(pointA, pointB) {
+  return pointB.basePrice - pointA.basePrice;
 }
 
-function sortPointsday(pointA, pointB) {
-  if (pointA.dateFrom < pointB.dateFrom) {
-    return -1;
-  }
-  if (pointA.dateFrom > pointB.dateFrom) {
-    return 1;
-  }
-
-  return 0;
+function sortPointsByDay(pointA, pointB) {
+  return dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 }
 
 const sort = {
-  [SortType.DAY]: (points) => points.sort(sortPointsday),
-  [SortType.PRICE]: (points) => points.sort(sortPointsPrice),
-  [SortType.TIME]: (points) => points.sort(sortPointsTime),
+  [SortType.DAY]: (points) => points.sort(sortPointsByDay),
+  [SortType.PRICE]: (points) => points.sort(sortPointsByPrice),
+  [SortType.TIME]: (points) => points.sort(sortPointsByTime),
 };
 
 export { sort };

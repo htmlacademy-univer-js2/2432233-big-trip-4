@@ -42,17 +42,17 @@ function createDestinationsTemplate(destinations) {
   return destinations.map((destination) => `<option value="${encode(destination.name)}"></option>`).join('');
 }
 
-function createDestinationsBlockTempalte(destination) {
+function createDestinationsBlockTemplate(destination) {
   return `
-    ${destination.pictures.length > 0 || destination.description ? `<section class="event__section  event__section--destination">
+    ${destination.description ? `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destination.description}</p>
 
-    <div class="event__photos-container">
+    ${destination.pictures.length > 0 ? `<div class="event__photos-container">
       <div class="event__photos-tape">
         ${createPhotosTemplate(destination.pictures)}
       </div>
-    </div>
+    </div>` : ''}
   </section>` : ''}`;
 }
 
@@ -166,7 +166,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
 
           </section>` : ''}
 
-          ${point.destination ? createDestinationsBlockTempalte(destination) : ''}
+          ${point.destination ? createDestinationsBlockTemplate(destination) : ''}
 
         </section>
       </form>

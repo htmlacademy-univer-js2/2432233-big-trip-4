@@ -180,55 +180,63 @@ export default class RoutePresenter {
   };
 
   #modelEventHandler = async (updateType, data) => {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        this.#pointsPresenters?.get(data.id)?.init(data, this.#destinationsModel, this.#offersModel);
-        break;
-      case UpdateType.MINOR:
-        this.#clearRoute();
-        this.#renderRoute();
-        break;
-      case UpdateType.MAJOR:
-        this.#clearRoute(true);
-        this.#renderRoute();
-        break;
-      case UpdateType.INIT:
-        this.#isLoadingError = data.isError;
-        this.#isLoading = false;
-        this.#clearRoute();
-        this.#renderRoute();
-        break;
+    try {
+      switch (updateType) {
+        case UpdateType.PATCH:
+          this.#pointsPresenters?.get(data.id)?.init(data, this.#destinationsModel, this.#offersModel);
+          break;
+        case UpdateType.MINOR:
+          this.#clearRoute();
+          this.#renderRoute();
+          break;
+        case UpdateType.MAJOR:
+          this.#clearRoute({resetSortType: true});
+          this.#renderRoute();
+          break;
+        case UpdateType.INIT:
+          this.#isLoadingError = data.isError;
+          this.#isLoading = false;
+          this.#clearRoute();
+          this.#renderRoute();
+          break;
+      }
+    } catch (error) {
+      throw new Error('Error handling model event:', error);
     }
   };
 
   #viewActionHandler = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
-    switch (actionType) {
-      case UserAction.UPDATE_POINT:
-        this.#pointsPresenters.get(update.id).setSaving();
-        try {
+    try {
+      switch (actionType) {
+        case UserAction.UPDATE_POINT:
+          this.#pointsPresenters.get(update.id).setSaving();
           await this.#pointsModel.updatePoint(updateType, update);
-        } catch {
-          this.#pointsPresenters.get(update.id).setAborting();
-        }
-        break;
-      case UserAction.ADD_POINT:
-        this.#newPointPresenter.setSaving();
-        try {
+          break;
+        case UserAction.ADD_POINT:
+          this.#newPointPresenter.setSaving();
           await this.#pointsModel.addPoint(updateType, update);
-        } catch {
-          this.#newPointPresenter.setAborting();
-        }
-        break;
-      case UserAction.DELETE_POINT:
-        this.#pointsPresenters.get(update.id).setDeleting();
-        try {
+          break;
+        case UserAction.DELETE_POINT:
+          this.#pointsPresenters.get(update.id).setDeleting();
           await this.#pointsModel.deletePoint(updateType, update);
-        } catch {
+          break;
+      }
+    } catch (error) {
+      switch (actionType) {
+        case UserAction.UPDATE_POINT:
           this.#pointsPresenters.get(update.id).setAborting();
-        }
-        break;
+          break;
+        case UserAction.ADD_POINT:
+          this.#newPointPresenter.setAborting();
+          break;
+        case UserAction.DELETE_POINT:
+          this.#pointsPresenters.get(update.id).setAborting();
+          break;
+      }
+      // throw new Error('Error handling view action:', error);  если выкидывать ошибку, то тест не проходит(
     }
+
     this.#uiBlocker.unblock();
   };
 

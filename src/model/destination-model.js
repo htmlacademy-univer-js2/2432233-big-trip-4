@@ -15,7 +15,13 @@ export default class DestinationsModel {
   }
 
   async init() {
-    this.#destinations = await this.#service.destinations;
+    try {
+      this.#destinations = await this.#service.destinations;
+    } catch (error) {
+      this.#destinations = [];
+      throw new Error('Error initializing destinations:', error);
+    }
+
     return this.#destinations;
   }
 }
