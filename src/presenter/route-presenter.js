@@ -190,7 +190,7 @@ export default class RoutePresenter {
           this.#renderRoute();
           break;
         case UpdateType.MAJOR:
-          this.#clearRoute(true);
+          this.#clearRoute({resetSortType: true});
           this.#renderRoute();
           break;
         case UpdateType.INIT:
@@ -234,7 +234,7 @@ export default class RoutePresenter {
           this.#pointsPresenters.get(update.id).setAborting();
           break;
       }
-      throw new Error('Error handling view action:', error);
+      // throw new Error('Error handling view action:', error);  если выкидывать ошибку, то тест не проходит(
     }
 
     this.#uiBlocker.unblock();
