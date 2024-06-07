@@ -43,7 +43,7 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-const AUTHORIZATION = 'Basic spveve93f4dhg';
+const AUTHORIZATION = 'Basic spvevewr93f4dhg';
 const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
 
 const Mode = {

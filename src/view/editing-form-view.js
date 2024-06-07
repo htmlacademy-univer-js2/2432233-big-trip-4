@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 import { formatEditDate } from '../utils/date.js';
-import { TYPES,EditingType, BLANK_POINT, ButtonLabels } from '../const.js';
+import { TYPES, EditingType, BLANK_POINT, ButtonLabels } from '../const.js';
 import { capitalize } from '../utils/common.js';
 
 import { encode } from 'he';
@@ -125,7 +125,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
               ${encode(point.type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-              value="${destination ? encode(destination.name) : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+              value="${destination ? encode(destination.name) : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''} required>
             <datalist id="destination-list-1">
 
               ${createDestinationsTemplate(destinations)}
@@ -161,7 +161,7 @@ function createEditingFormTemplate({ state, destinations, offerItem, type }) {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${createOffersTemplate({offersList, point, isDisabled})}
+              ${createOffersTemplate({ offersList, point, isDisabled })}
             </div>
 
           </section>` : ''}
@@ -196,7 +196,7 @@ export default class EditingFormView extends AbstractStatefulView {
     this.#handleEditReset = onDelete;
     this.#eventType = eventType;
 
-    this._setState(EditingFormView.parsePointToState({point}));
+    this._setState(EditingFormView.parsePointToState({ point }));
 
     this._restoreHandlers();
   }
@@ -210,7 +210,7 @@ export default class EditingFormView extends AbstractStatefulView {
     });
   }
 
-  reset = (point) => this.updateElement({point});
+  reset = (point) => this.updateElement({ point });
 
   removeElement = () => {
     super.removeElement();
@@ -256,6 +256,9 @@ export default class EditingFormView extends AbstractStatefulView {
         minDate: this._state.point.dateFrom
       }
     );
+
+    dateFromElem.addEventListener('change', this.#updateSaveButtonState);
+    dateToElem.addEventListener('change', this.#updateSaveButtonState);
   };
 
   _restoreHandlers = () => {
@@ -286,11 +289,24 @@ export default class EditingFormView extends AbstractStatefulView {
     }
 
     this.#setDatepickers();
+    this.#updateSaveButtonState();
   };
 
   #submitClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleSubmitClick(EditingFormView.parseStateToPoint(this._state));
+  };
+
+  #updateSaveButtonState = () => {
+    const dateFromElem = this.element.querySelector('#event-start-time-1');
+    const dateToElem = this.element.querySelector('#event-end-time-1');
+    const saveButton = this.element.querySelector('.event__save-btn');
+
+    if (!dateFromElem.value || !dateToElem.value) {
+      saveButton.disabled = true;
+    } else {
+      saveButton.disabled = false;
+    }
   };
 
   #closeClickHandler = (evt) => {

@@ -234,7 +234,7 @@ export default class RoutePresenter {
           this.#pointsPresenters.get(update.id).setAborting();
           break;
       }
-      // throw new Error('Error handling view action:', error);  если выкидывать ошибку, то тест не проходит(
+      throw new Error('Error handling view action:', error);
     }
 
     this.#uiBlocker.unblock();
