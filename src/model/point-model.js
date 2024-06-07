@@ -36,7 +36,7 @@ export default class PointsModel extends Observable {
     } catch (error) {
       this.#points = [];
       this._notify(UpdateType.INIT, {isError: true});
-      // throw new Error('Error initializing points:', error);  если выкидывать ошибку, то тест не проходит(
+      throw new Error('Error initializing points:', error);
     }
   }
 
